@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://kit.fontawesome.com/4bf93b0ca4.js" crossorigin="anonymous"></script>
+
+    <style>
+        .background-image {
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(0);
+            }
+            to {
+                transform: translateX(100%);
+            }
+        }
+
+        .toast {
+            background-color: rgb(231, 216, 169);
+            color: #7A6565;
+            padding: 15px;
+            border-radius: 10px;
+            position: fixed;
+            top: 50px;
+            right: 42%;
+            font-weight: bold;
+            z-index: 1;
+            display: none;
+            animation: slideInLeft ease 2s, fadeOut linear 1s 2s forwards;
+            transition: all linear 0.3s;
+        }
+
+        .pagination {
+            float: right;
+        }
+
+        th {
+            text-align: center;
+        }
+
+        td {
+            text-align: center;
+        }
+
+        input {
+            border-radius: 5px;
+        }
+
+        button {
+            color: black;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        span {
+            font-weight: bold;
+        }
+
+        .search-box button[type="submit"] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 5px 10px;
+            height: 27px;
+            background-color: black;
+            border: none;
+            color: #fff;
+            font-size: 10px;
+            border-radius: 0 20px 20px 0;
+            cursor: pointer;
+        }
+    </style>
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="author" content="">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="stylesheet" type="text/css" href="/css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="/icomoon/icomoon.css">
+    <link rel="stylesheet" type="text/css" href="/css/vendor.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+
+    <!-- script
+    ================================================== -->
+    <script src="/js/modernizr.js"></script>
+    <!--		Create: Huynh Duc-->
+    <!--		Day: 08/07/2023-->
+    <link rel="stylesheet" href="/css/dropdownAccount.css">
+
+</head>
+
+<body style="background: rgb(243, 242, 236)">
+<!--		Create: Huynh Duc-->
+<!--		Day: 11/07/2023-->
+<div th:insert="user/navbar1 :: copy"></div>
+
+
+<div id="toast" class="toast"></div>
+
+
+<div class="background-image">
+    <div style="text-align: center" class="mb-4">
+        <h1>ORDER MANAGEMENT </h1>
+    </div>
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <div class="mb-3">
+                <form id="idForm">
+                    <div class="row">
+                        <div class="col-xs-0 col-md-3 col-lg-3"></div>
+                        <div class="col-xs-4 col-md-2 col-lg-3">
+                            <span style="color: black">From : </span>
+                            <input placeholder="Date" class="textbox-n" onblur="(this.type='text')"
+                                   onfocus="(this.type='date')"
+                                   style="border-radius: 5px;width: 139px;height: 28px;text-align: center"
+                                   name="dateStart" id="dateStart">
+                        </div>
+                        <div class="col-xs-4 col-md-3 col-lg-3">
+                            <span style="color: black">To : </span>
+                            <input placeholder="Date" class="textbox-n" onblur="(this.type='text')"
+                                   onfocus="(this.type='date')"
+                                   style="border-radius: 5px;width: 139px;height: 28px;text-align: center"
+                                   name="dateEnd" id="dateEnd">
+                        </div>
+                        <div class="col-xs-4 col-md-3 col-lg-3">
+                            <select name="select"
+                                    style="border-radius: 5px;width: 139px;height: 28px;text-align: center">
+                                <option value="0">Status</option>
+                                <option value="1">Processing</option>
+                                <option value="2">Delivery</option>
+                                <option value="3">Delivered</option>
+                                <option value="4">Cancel order</option>
+                                <option value="5">Return Order</option>
+                            </select>
+                                <button type="button" onclick="searchOrder()"><i class="fa fa-search"></i></button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">STT</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Order Date</th>
+                        <th scope="col">Delivery Date</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Delete</th>
+                        <th scope="col">Detail</th>
+                    </tr>
+                    </thead>
+                    <tbody id="nhan">
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-1">
+            </div>
+        </div>
+    </div>
+</div>
+<!--<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"-->
+<!--     aria-hidden="true">-->
+<!--    <div class="modal-dialog">-->
+<!--        <div class="modal-header" style="background: rgb(213,209,191)">-->
+<!--            <div class="modal-header">-->
+<!--                <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Order</h1>-->
+<!--                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--            </div>-->
+<!--            <div class="modal-body" style="background: rgb(243, 242, 236)">-->
+<!--                <h6>Customer&nbsp:&nbsp<span id="nameCustomer"></span></h6>-->
+<!--                <h6>Address&nbsp:&nbsp<span id="addressCustomer"></span></h6>-->
+<!--                <input type="hidden" id="blogId" name="blogId">-->
+<!--                <p style="color: red;font-size: 12px;margin-bottom: 0">This action cannot be undone</p>-->
+<!--            </div>-->
+<!--            <div class="modal-footer" style="background: rgb(213,209,191)">-->
+<!--                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+<!--                &lt;!&ndash;                <form th:action="@{/order/delete}" method="post">&ndash;&gt;-->
+<!--                &lt;!&ndash;                    <input type="hidden" id="id" name="id">&ndash;&gt;-->
+<!--                <button type="button" onclick="deleteOrder()" class="btn btn-primary">Delete</button>-->
+<!--                &lt;!&ndash;                </form>&ndash;&gt;-->
+<!--                &lt;!&ndash;                <button type="button" onclick="deleteOrder()">Delete</button>&ndash;&gt;-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background: rgb(213,209,191)">
+                <h4 class="modal-title" id="exampleModalLabel">DELETE USER</h4>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="background: rgb(243, 242, 236)">
+                <span style="font-size: 15px; font-weight: bold">Do you want to delete Order? </span> <span
+                    class="text-danger" style="font-weight: bold; font-size: 15px" id="nameCustomer"></span>
+                <br>
+                <span style="font-size: 15px; font-weight: bold">And address </span>
+                <span class="text-danger" style="font-weight: bold; font-size: 15px" id="addressCustomer"></span>
+                <br>
+                <br>
+                <input type="hidden" id="blogId" name="blogId">
+                <div style="color: red; font-weight: bold; font-size: 15px">THIS ACTION CANNOT BE UNDONE!</div>
+            </div>
+            <div class="modal-footer" style="background: rgb(213,209,191)">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" onclick="deleteOrder()" class="btn btn-primary">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Create: Huynh Duc-->
+<!--Day: 11/07/2023-->
+<script src="/js/jquery-1.11.0.min.js"></script>
+<script src="/js/plugins.js"></script>
+<script src="/js/script.js"></script>
+<script>
+    const getList = () => {
+        $.ajax({
+            url: 'http://localhost:8080/order/list',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                console.log(JSON.stringify(data))
+                let number = 0
+                let orderStr = '';
+                for (let order of data.content) {
+                    orderStr += `
+                    <tr>
+                    <td>${++number}</td>
+
+                    <td >${order.nameUser}</td>
+                    <td >${order.dayOrder}</td>
+                    <td >${order.dayTake != null ? order.dayTake : ''}</td>
+
+                   <td>
+                    <select class="mySelect"  style="border-radius: 5px;">
+                    <option value="1,${order.id}" ${order.nameStatus === 'Processing' ? 'selected' : ''}>Processing</option>
+                    <option value="2,${order.id}" ${order.nameStatus === 'Delivery' ? 'selected' : ''}>Delivery</option>
+                    <option value="3,${order.id}" ${order.nameStatus === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                    <option value="4,${order.id}" ${order.nameStatus === 'Cancel order' ? 'selected' : ''}>Cancel order</option>
+                    <option value="5,${order.id}" ${order.nameStatus === 'Return Order' ? 'selected' : ''}>Return Order</option>
+                    </select>
+                     <td>
+                        <button type="button" class="b1"
+                                onclick="deleteModal('${order.id}','${order.nameUser}','${order.addressPeople}')"
+                                data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fa-solid fa-trash"></i>
+                        </button>
+                   </td>
+
+                    <td>
+
+                        <button type="button" class="b1" onclick="detailOrder('${order.id}')">
+                               <span class="font"><i
+                            class="fa-solid fa-info"></i></span>
+                        </button>
+
+                   </td>
+              </tr>
+                    </tr>
+
+                `;
+                }
+                $("#nhan").html(orderStr);
+            },
+            error: function (error) {
+                window.location.href = 'http://localhost:8080/order/error/';
+            }
+        });
+    }
+    $(document).on('change', '.mySelect', function () {
+        let option = $(this).val();
+        $.ajax({
+            url: 'http://localhost:8080/order/option/' + option,
+            type: "GET",
+            success: function () {
+                getList()
+            },
+            error: function (error) {
+                toast.innerText = "immutable state!";
+
+                // Hiển thị toast
+                toast.style.display = "block";
+
+                // Tự động ẩn toast sau 3 giây
+                setTimeout(function () {
+                    toast.style.display = "none";
+                }, 1500);
+                getList();
+                //TODO
+            }
+        })
+    })
+    const detailOrder = (a) => {
+        window.location.href = 'http://localhost:8080/order/detail/' + a;
+    }
+
+    const deleteModal = (id, name, address) => {
+        document.getElementById("nameCustomer").innerHTML = name;
+        document.getElementById("blogId").value = id;
+        document.getElementById("addressCustomer").innerHTML = address;
+    }
+    const deleteOrder = () => {
+        let id = document.getElementById("blogId").value * 1;
+        $('#deleteModal').modal('hide');
+        var toast = document.getElementById("toast");
+
+        // Thiết lập nội dung toast
+        toast.innerText = "Delete Successful!";
+
+        // Hiển thị toast
+        toast.style.display = "block";
+
+        // Tự động ẩn toast sau 3 giây
+        setTimeout(function () {
+            toast.style.display = "none";
+        }, 1500);
+        $.ajax({
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            url: 'http://localhost:8080/order/delete/' + id,
+            type: 'POST',
+            success: function () {
+                getList();
+            },
+            error: function (error) {
+                toast.innerText = "Delete Fault!";
+
+                // Hiển thị toast
+                toast.style.display = "block";
+
+                // Tự động ẩn toast sau 3 giây
+                setTimeout(function () {
+                    toast.style.display = "none";
+                }, 1500);
+                getList();
+            }
+        })
+    }
+    const searchOrder = () => {
+        const form = $('#idForm');
+        $.ajax({
+            url: 'http://localhost:8080/order/search',
+            data: form.serialize(),
+            type: 'POST',
+            dataType: 'json',
+            success: function (data) {
+                console.log(JSON.stringify(data));
+                let number = 0
+                let orderSearch = '';
+                for (let order of data.content) {
+                    orderSearch += `
+                   <tr>
+                    <td>${++number}</td>
+
+                    <td >${order.nameUser}</td>
+                    <td >${order.dayOrder}</td>
+                    <td >${order.dayTake != null ? order.dayTake : ''}</td>
+
+                   <td>
+                    <select class="mySelect"  style="border-radius: 5px;">
+                    <option value="1,${order.id}" ${order.nameStatus === 'Processing' ? 'selected' : ''}>Processing</option>
+                    <option value="2,${order.id}" ${order.nameStatus === 'Delivery' ? 'selected' : ''}>Delivery</option>
+                    <option value="3,${order.id}" ${order.nameStatus === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                    <option value="4,${order.id}" ${order.nameStatus === 'Cancel order' ? 'selected' : ''}>Cancel order</option>
+                     <option value="5,${order.id}" ${order.nameStatus === 'Return Order' ? 'selected' : ''}>Return Order</option>
+                    </select>
+                   <td>
+                        <button type="button" class="b1"
+                                onclick="deleteModal('${order.id}','${order.nameUser}','${order.addressPeople}')"
+                                data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fa-solid fa-trash"></i>
+                        </button>
+                   </td>
+
+                    <td>
+
+                        <button type="button" class="b1" onclick="detailOrder('${order.id}')">
+                               <span class="font"><i
+                            class="fa-solid fa-info"></i></span>
+                        </button>
+
+                   </td>
+              </tr>
+                    </tr>
+
+                `;
+                }
+
+                $("#nhan").html(orderSearch);
+            },
+            error: function (error) {
+                alert("nhan")
+                toast.innerText = "Search Fault!";
+
+                // Hiển thị toast
+                toast.style.display = "block";
+
+                // Tự động ẩn toast sau 3 giây
+                setTimeout(function () {
+                    toast.style.display = "none";
+                }, 1500);
+                getList();
+            }
+        });
+    }
+    // function showToast(message) {
+    //     var toast = document.getElementById("toast");
+    //     toast.style.display = "block";
+    //     toast.innerText = message;
+    //     setTimeout(function () {
+    //         toast.style.display = "none";
+    //     }, 2000); // Hide the toast message after 3 seconds
+    // }
+    // // Automatically show the toast message when the page is reloaded
+    // window.addEventListener('load', function () {
+    //     showToast("Delete Successful");
+    // });
+    $(document).ready(function () {
+        getList();
+    })
+
+
+    // const deleteOrder = () => {
+    //     let id = document.getElementById("id").value*1;
+    //     $('#deleteModal').modal('hide');
+    //         $.ajax({
+    //             headers : {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             url: 'http://localhost:8080/order/delete/'+id,
+    //             type: 'POST',
+    //                 success:function (e){
+    //                     window.location.href = 'http://localhost:8080/order';
+    //                     alert("nhan")
+    //                 },
+    //             error: function (error) {
+    //                 alert("nhana")
+    //                 //TODO
+    //             }
+    //             })
+    //     }
+
+    // $(document).ready(function () {
+    //     getList();
+    // })
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+</body>
+</html>
